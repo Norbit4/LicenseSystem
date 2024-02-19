@@ -20,6 +20,24 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, status );
     }
 
+    @ExceptionHandler(value = NotValidLicenseException.class)
+    public ResponseEntity<?> handleNotValidTokenException(NotValidLicenseException e){
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        ApiException apiException = new ApiException(e.getMessage(),status, ZonedDateTime.now(ZoneId.systemDefault()));
+
+        return new ResponseEntity<>(apiException, status );
+    }
+
+    @ExceptionHandler(value = NotValidTokenException.class)
+    public ResponseEntity<?> handleNotValidTokenException(NotValidTokenException e){
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+
+        ApiException apiException = new ApiException(e.getMessage(),status, ZonedDateTime.now(ZoneId.systemDefault()));
+
+        return new ResponseEntity<>(apiException, status );
+    }
+
     @ExceptionHandler(value = LastTokenException.class)
     public ResponseEntity<?> handleLastTokenException(LastTokenException e){
         HttpStatus status = HttpStatus.CONFLICT;
@@ -33,8 +51,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<?> handleOther(RuntimeException e){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-        ApiException apiException = new ApiException(e.getMessage(), status,
-                ZonedDateTime.now(ZoneId.systemDefault()));
+        ApiException apiException = new ApiException(e.getMessage(), status, ZonedDateTime.now(ZoneId.systemDefault()));
 
         return new ResponseEntity<>(apiException, status);
     }
