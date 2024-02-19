@@ -1,52 +1,35 @@
 package pl.norbit.backend.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
+import lombok.*;
 
-@Document
+
+@Data
+@ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+
+@Table(name = "token_table")
+@Entity
 public class Token {
+    public interface TokenGet {}
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(TokenGet.class)
+    private Long id;
+
+    @JsonView(TokenGet.class)
     private String accessToken;
 
+    @JsonView(TokenGet.class)
     private long creationDate;
 
-    private String tokenType;
+    @JsonView(TokenGet.class)
+    private TokenType tokenType;
 
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public long getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getTokenType() {
-        return tokenType;
-    }
-
-    public void setTokenType(String tokenType) {
-        this.tokenType = tokenType;
-    }
+    @Transient
+    private String tokenRequest;
 }

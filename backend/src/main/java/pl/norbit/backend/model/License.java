@@ -1,90 +1,47 @@
 package pl.norbit.backend.model;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.annotation.Transient;
 
-@Document
+
+@Data
+@ToString
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+
+@Table(name = "license_table")
+@Entity
 public class License{
 
+    public interface Get {}
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(Get.class)
+    private Long id;
 
+    @JsonView(Get.class)
     private String owner;
-    private String key;
+    @JsonView(Get.class)
+    private String licenseKey;
+    @JsonView(Get.class)
     private String description;
-
+    @JsonView(Get.class)
     private long creationDate;
+    @JsonView(Get.class)
     private long expirationDate;
     private long lastActive;
+
+    @JsonView(Get.class)
+    private LicenseType licenseType;
 
     @Transient
     private int daysToExpire;
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getOwner() {
-        return owner;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public long getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public long getExpirationDate() {
-        return expirationDate;
-    }
-
-    public void setExpirationDate(long expirationDat) {
-        this.expirationDate = expirationDat;
-    }
-
-    public long getLastActive() {
-        return lastActive;
-    }
-
-    public void setLastActive(long lastActive) {
-        this.lastActive = lastActive;
-    }
-
-    public int getDaysToExpire() {
-        return daysToExpire;
-    }
-
-    public void setDaysToExpire(int daysToExpire) {
-        this.daysToExpire = daysToExpire;
-    }
+    @Transient
+    private String serverKey;
 }
