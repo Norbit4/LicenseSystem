@@ -1,0 +1,25 @@
+version: "1.1"
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: voperituj94jvmfitfi49ug8ghj
+      MARIADB_USER: superuser
+      MARIADB_PASSWORD: secret
+      MARIADB_DATABASE: data
+    ports: 
+      - "3306:3306"
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: always
+    links:
+      - mariadb
+    ports:
+      - "8080:8080"  
+    depends_on:
+      - mariadb
