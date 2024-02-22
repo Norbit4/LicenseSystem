@@ -2,10 +2,11 @@ package pl.norbit.backend.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import pl.norbit.backend.exception.NotValidLicenseException;
-import pl.norbit.backend.exception.RequestException;
-import pl.norbit.backend.model.License;
-import pl.norbit.backend.model.LicenseType;
+import pl.norbit.backend.exception.ExceptionMessage;
+import pl.norbit.backend.exception.model.NotValidLicenseException;
+import pl.norbit.backend.exception.model.RequestException;
+import pl.norbit.backend.model.license.License;
+import pl.norbit.backend.model.license.LicenseType;
 import pl.norbit.backend.repository.LicenseRepository;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class LicenseService {
     public License save(License license) {
         long now = System.currentTimeMillis();
 
-        if(license.getOwner() == null) throw new RequestException("Owner cannot be null");
+        if(license.getOwner() == null) throw new RequestException(ExceptionMessage.LICENSE_OWNER_NULL);
 
         int daysToExpire = license.getDaysToExpire();
 
@@ -41,33 +42,43 @@ public class LicenseService {
         String licenseKey = license.getLicenseKey();
         String serverKey = license.getServerKey();
 
-        if(licenseKey == null) throw new RequestException("License key cannot be null");
+        if(licenseKey == null) throw new RequestException(ExceptionMessage.LICENSE_KEY_NULL);
+        if(serverKey == null) throw new RequestException(ExceptionMessage.LICENSE_SERVER_KEY_NULL);
 
-        if(serverKey == null) throw new RequestException("Server key cannot be null");
+        License licenseEntity = findByKey(licenseKey);
 
-        License repoLicense = findByKey(licenseKey);
+        if(licenseEntity == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
 
-        if(repoLicense == null) throw new NotValidLicenseException("License not found");
+        licenseEntity.setServerKey(serverKey);
+        licenseEntity.setLastActive(System.currentTimeMillis());
 
-        repoLicense.setLastActive(System.currentTimeMillis());
+        licenseRepository.save(licenseEntity);
+    }
 
-        licenseRepository.save(repoLicense);
+    public void isValidServerKey(String key, String serverKey){
+        License licenseEntity = findByKey(key);
+
+        if(licenseEntity == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
+        String licenseEntityServerKey = licenseEntity.getServerKey();
+
+        if(!licenseEntityServerKey.equals(serverKey))
+            throw new NotValidLicenseException((ExceptionMessage.LICENSE_WRONG_SERVER_KEY));
     }
 
     public void isValid(String key){
         License license = findByKey(key);
 
-        if(license == null) throw new NotValidLicenseException("License not found");
+        if(license == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
 
-        if(isExpired(license)) throw new NotValidLicenseException("License is expired");
+        if(isExpired(license)) throw new NotValidLicenseException(ExceptionMessage.LICENSE_IS_EXPIRED);
 
         if(license.getLastActive() == 0) return;
 
-        if(isLastActive(license)) throw new NotValidLicenseException("License was last active less than 2 minutes ago");
+//        if(isLastActive(license)) throw new NotValidLicenseException("License was last active less than 2 minutes ago");
     }
 
     private boolean isLastActive(License license){
-        long time = 1000 * 60 * 2;
+        long time = 1000 * 60 * 2L;
 
         return license.getLastActive() + time > System.currentTimeMillis();
     }
@@ -84,7 +95,7 @@ public class LicenseService {
 
     public void deleteById(Long id) {
         licenseRepository.findById(id)
-                .orElseThrow(() -> new RequestException("Token with id " + id + " does not exist!"));
+                .orElseThrow(() -> new RequestException(ExceptionMessage.LICENSE_NOT_FOUND));
 
         licenseRepository.deleteById(id);
     }
