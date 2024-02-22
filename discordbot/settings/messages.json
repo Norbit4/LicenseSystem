@@ -1,0 +1,8 @@
+{
+  "licenseForm": {
+    "title": "Create license",
+    "ownerLabel": "Owner",
+    "descriptionLabel": "Description",
+    "timeLabel": "Time (d, h) ex: 2d, 2h"
+  }
+}
