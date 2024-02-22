@@ -21,7 +21,17 @@ class BotManager {
     handleCommand(e) {
         const command = this.commands.find((cmd) => cmd.name === e.commandName);
 
-        if (command) command.execute(e);
+        if (command){
+            const options = command.options;
+            const sCmd = e.options._subcommand;
+
+            if(!sCmd){
+                command.execute(e);
+            }else{
+                const subcommand = options.find(sub => sub.name === sCmd);
+                if(subcommand) subcommand.execute(e);
+            }
+        }
     }
 
     handleForm(e) {
@@ -30,11 +40,19 @@ class BotManager {
         if (form) form.execute(e);
     }
 
+    registerCommands(...commands){
+        commands.forEach(cmd => this.registerCommand(cmd));
+    }
+
     registerCommand(cmd) {
+        let options = cmd.subcommands;
+
+        if(cmd.subcommands.length === 0) options = cmd.options
+
         const command = {
             name: cmd.name,
             description: cmd.description,
-            options: cmd.options || [],
+            options: options || [],
             execute: cmd.execute || (() => {}),
         };
 
@@ -53,17 +71,19 @@ class BotManager {
         const comps = []
 
         form.inputs.forEach(input =>{
+
             const genInput = new TextInputBuilder()
                 .setCustomId(input.id)
+                .setRequired(input.required)
                 .setLabel(input.label)
                 .setStyle(input.style);
 
-            comps.push(new ActionRowBuilder().addComponents(genInput))
+            comps.push(new ActionRowBuilder().addComponents(genInput));
         });
 
-        modal.addComponents(comps)
+        modal.addComponents(comps);
 
-        this.forms.push(form)
+        this.forms.push(form);
 
         return modal;
     }

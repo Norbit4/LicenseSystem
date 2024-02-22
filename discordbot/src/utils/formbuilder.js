@@ -1,15 +1,31 @@
 const crypto= require('crypto');
+const { TextInputStyle } = require("discord.js");
 class FormBuilder {
+
+    /**
+     * @param {string} title
+     */
     constructor(title) {
         this.id = crypto.randomUUID();
         this.title = title;
         this.inputs = [];
     }
-
-    addTextInput(id, label, style) {
-        this.inputs.push({id, label, style});
+    /**
+     * Add text input
+     * @param {string} id
+     * @param {string} label
+     * @param {TextInputStyle} style
+     * @param {boolean} required
+     */
+    addTextInput(id, label, style, required) {
+        this.inputs.push({id, label, style, required});
         return this;
     }
+
+    /**
+     * Add execute function to form
+     * @param {function} execute
+     */
     addExecute(execute){
         this.execute = execute;
         return this;
