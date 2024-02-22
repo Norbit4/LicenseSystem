@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.norbit.backend.model.License;
-import pl.norbit.backend.model.TokenType;
+import pl.norbit.backend.model.license.License;
+import pl.norbit.backend.model.token.TokenType;
 import pl.norbit.backend.service.LicenseService;
 import pl.norbit.backend.service.TokenService;
 
@@ -20,7 +20,7 @@ public class LicenseController {
     private final TokenService tokenService;
 
     @PostMapping(path = "/save")
-    public ResponseEntity<?> saveTicket(@RequestHeader("token") String token, @RequestBody License license) {
+    public ResponseEntity<License> saveTicket(@RequestHeader("token") String token, @RequestBody License license) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
         License saveLicense = licenseService.save(license);
@@ -29,7 +29,7 @@ public class LicenseController {
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<?> updateTime(@RequestHeader("token") String token, @RequestBody License license) {
+    public ResponseEntity<HttpStatus> updateTime(@RequestHeader("token") String token, @RequestBody License license) {
         tokenService.verifyToken(token, TokenType.DEFAULT);
 
         licenseService.updateActive(license);
@@ -38,7 +38,7 @@ public class LicenseController {
     }
 
     @GetMapping(path = "/isValid/{key}")
-    public ResponseEntity<?> isValid(@RequestHeader("token") String token, @PathVariable String key) {
+    public ResponseEntity<HttpStatus> isValid(@RequestHeader("token") String token, @PathVariable String key) {
         tokenService.verifyToken(token, TokenType.DEFAULT);
 
         licenseService.isValid(key);
@@ -47,7 +47,7 @@ public class LicenseController {
     }
 
     @DeleteMapping(path = "/delete/{id}")
-    public ResponseEntity<?> deleteTicket(@RequestHeader("token") String token, @PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteTicket(@RequestHeader("token") String token, @PathVariable Long id) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
         licenseService.deleteById(id);
@@ -57,7 +57,7 @@ public class LicenseController {
 
     @JsonView(License.Get.class)
     @GetMapping(path = "/get/all")
-    public ResponseEntity<?> getAllLicenses(@RequestHeader("token") String token) {
+    public ResponseEntity<List<License>> getAllLicenses(@RequestHeader("token") String token) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
         List<License> all = licenseService.findAll();
