@@ -1,6 +1,5 @@
-package pl.norbit.backend.model;
+package pl.norbit.backend.model.license;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.*;

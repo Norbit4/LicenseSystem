@@ -2,7 +2,7 @@ package pl.norbit.backend.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import pl.norbit.backend.model.License;
+import pl.norbit.backend.model.license.License;
 
 import java.util.Optional;
 

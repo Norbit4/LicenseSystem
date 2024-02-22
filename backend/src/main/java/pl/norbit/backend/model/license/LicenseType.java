@@ -1,4 +1,4 @@
-package pl.norbit.backend.model;
+package pl.norbit.backend.model.license;
 
 public enum LicenseType {
     LIFETIME, DEFAULT;

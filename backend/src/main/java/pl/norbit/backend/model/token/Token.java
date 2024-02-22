@@ -1,4 +1,4 @@
-package pl.norbit.backend.model;
+package pl.norbit.backend.model.token;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;

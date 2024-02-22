@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import pl.norbit.backend.model.Token;
-import pl.norbit.backend.model.TokenType;
+import pl.norbit.backend.model.token.Token;
+import pl.norbit.backend.model.token.TokenType;
 import pl.norbit.backend.repository.TokenRepository;
 
 import java.util.List;
