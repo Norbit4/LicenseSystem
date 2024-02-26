@@ -5,14 +5,20 @@ axios.defaults.headers.common['token'] = 'admin-secret-token';
 
 const testValue = process.env.test;
 
-const GET = (endpoint) =>{
-    return axios.get(endpoint);
-}
-GET('/token/get/all')
-    .then((response) => {
-        console.log(response.data);
-    })
-    .catch((error) => {
-        console.error(error);
+const GET = (endpoint, responseType) =>{
+   return axios.get(endpoint, {
+        responseType: responseType
     });
+}
 
+const DELETE = (endpoint, responseType) =>{
+    return axios.delete(endpoint, {
+        responseType: responseType
+    });
+}
+
+const POST = (endpoint, data) => {
+    return axios.post(endpoint, data);
+}
+
+module.exports = { GET, DELETE, POST }
