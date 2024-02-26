@@ -6,6 +6,7 @@ import pl.norbit.backend.exception.ExceptionMessage;
 import pl.norbit.backend.exception.model.LastTokenException;
 import pl.norbit.backend.exception.model.NotValidTokenException;
 import pl.norbit.backend.exception.model.RequestException;
+import pl.norbit.backend.exception.model.TokenNotFoundException;
 import pl.norbit.backend.model.token.Token;
 import pl.norbit.backend.model.token.TokenType;
 import pl.norbit.backend.repository.TokenRepository;
@@ -25,7 +26,7 @@ public class TokenService {
 
     public void verifyToken(String token, TokenType expectedTokenType) {
         Token tokenEntity = tokenRepository.findTokenByAccessToken(token)
-                .orElseThrow(() -> new NotValidTokenException(ExceptionMessage.TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new TokenNotFoundException(ExceptionMessage.TOKEN_NOT_FOUND));
 
         TokenType tokenType = tokenEntity.getTokenType();
 
