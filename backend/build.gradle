@@ -16,12 +16,25 @@ repositories {
 }
 
 dependencies {
+    //spring data
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+//    implementation 'org.apache.poi:poi:4.1.2'
+//    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+
+    //excel lib
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+    //spring web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+//    implementation 'org.springframework.boot:spring-boot-starter-security'
 //    testImplementation 'org.springframework.security:spring-security-test'
+
+    //lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 }
