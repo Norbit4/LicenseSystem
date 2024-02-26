@@ -1,10 +1,13 @@
 const { BotManager } = require("../utils/botutils");
 const { FormBuilder } = require("../utils/formbuilder");
+
 const { TextInputStyle } = require("discord.js");
 const { CmdBuilder } = require("../utils/commandbuilder");
 
 const { licenseForm } = require('../../settings/messages.json');
-const { title, ownerLabel, descriptionLabel, timeLabel } = licenseForm
+const { getReport, isValid, createToken, createLicense, deleteToken, deleteLicense } = require("../service/commandservice");
+
+const { title, ownerLabel, descriptionLabel, timeLabel } = licenseForm;
 
 let form;
 
@@ -13,14 +16,16 @@ const createForms = (botManager) =>{
         .addTextInput('1', ownerLabel, TextInputStyle.Short, true)
         .addTextInput('2', descriptionLabel, TextInputStyle.Paragraph, false)
         .addTextInput('3', timeLabel, TextInputStyle.Short, false)
-        .addExecute(e => {
-            const owner = e.fields.getTextInputValue('1')
-            const description = e.fields.getTextInputValue('2')
-            const time = e.fields.getTextInputValue('3')
+        .addExecute(async e => {
+            const owner = e.fields.getTextInputValue('1');
+            const description = e.fields.getTextInputValue('2');
+            const time = e.fields.getTextInputValue('3');
 
-            e.reply(`${owner}, ${description}, ${time} `)
+            const message = await createLicense(owner, description, time);
+
+            e.reply(message);
         })
-        .build()
+        .build();
 
     form = botManager.createForm(formTemplate);
 };
@@ -28,57 +33,65 @@ const createForms = (botManager) =>{
 const createCommands = (botManager) =>{
     const licenseCmd = new CmdBuilder("license","create new license")
         .addSubCommand('generate', 'generate new license')
-            .addExecute((e) => {
-
+            .addExecute(async (e) => {
                 e.showModal(form);
-            })
-        .addSubCommand("get", "get all licences")
-            .addExecute((e) => {
-
-                e.reply('All licenses')
             })
         .addSubCommand("check", "check licence")
             .addOption('key', 'license key', true, 3)
-            .addExecute((e) => {
+            .addExecute(async (e) => {
+                const options = e.options;
+                const key = options.getString('key');
 
-                e.reply('Check')
+                const message = await isValid(key);
+
+                e.reply(message);
             })
         .addSubCommand("delete", "delete license")
-            .addOption('key', 'license key', true, 3)
-            .addExecute((e) => {
+            .addOption('id', 'license id', true, 4)
+            .addExecute(async (e) => {
+                const options = e.options;
+                const id = options.getInteger('id');
 
-                e.reply('Deleted!')
+                const message = await deleteLicense(id);
+
+                e.reply(message);
             })
         .build();
 
     const tokenCmd = new CmdBuilder("token","create new token")
         .addSubCommand("generate", "generate new token")
             .addOption("admin", "generate admin token", false, 5)
-            .addExecute((e) => {
+            .addExecute(async (e) => {
                 const options = e.options;
 
-                const adminOption = options.getBoolean('admin')
-                const admin = adminOption === null ?  false : adminOption;
+                const adminOption = options.getBoolean('admin');
+                const admin = adminOption === null ? false : adminOption;
 
-                console.log(admin);
+                const message = await createToken(admin);
 
-                e.reply('Generated!')
+                e.reply(message);
             })
         .addSubCommand("delete", "delete token")
-            .addOption('key', 'token key', true, 3)
-            .addExecute((e) => {
+            .addOption('id', 'token id', true, 4)
+            .addExecute(async (e) => {
+                const options = e.options;
+                const id = options.getInteger('id');
 
-                e.reply('Deleted!')
-            })
-        .addSubCommand("get", "get all tokens")
-            .addExecute((e) => {
+                const message = await deleteToken(id);
 
-                e.reply('All tokens')
+                e.reply(message);
             })
         .build();
 
+    const reportCmd = new CmdBuilder("report","get all licenses and tokens")
+        .addExecute(async (e) => {
+            const message = await getReport();
 
-    botManager.registerCommands(tokenCmd, licenseCmd);
+            e.reply(message);
+        })
+        .build();
+
+    botManager.registerCommands(tokenCmd, licenseCmd, reportCmd);
 };
 
 const init = (client) =>{
