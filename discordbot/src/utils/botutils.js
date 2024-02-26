@@ -1,4 +1,4 @@
-const { Events, ModalBuilder, TextInputBuilder, ActionRowBuilder } = require("discord.js");
+const { Events, ModalBuilder, TextInputBuilder, ActionRowBuilder, ButtonBuilder} = require("discord.js");
 
 class BotManager {
     constructor(client) {
@@ -12,7 +12,7 @@ class BotManager {
         this.client.on(Events.InteractionCreate, async (interaction) => {
             if(interaction.isModalSubmit()){
                 this.handleForm(interaction);
-            } else if (interaction.isCommand()){
+            }else if (interaction.isCommand()) {
                 this.handleCommand(interaction);
             }
         });
