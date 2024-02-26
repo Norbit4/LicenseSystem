@@ -12,32 +12,30 @@ import pl.norbit.backend.service.TokenService;
 
 import java.util.List;
 
+import static pl.norbit.backend.controller.LicenseController.Routes.*;
+
 @RestController
-@RequestMapping("/api/v1/license")
+@RequestMapping(path = ROOT)
 @AllArgsConstructor
 public class LicenseController {
     private final LicenseService licenseService;
     private final TokenService tokenService;
 
-    @PostMapping(path = "/save")
+    @PostMapping(path = SAVE)
     public ResponseEntity<License> saveTicket(@RequestHeader("token") String token, @RequestBody License license) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
-        License saveLicense = licenseService.save(license);
-
-        return new ResponseEntity<>(saveLicense, HttpStatus.OK);
+        return new ResponseEntity<>(licenseService.save(license), HttpStatus.OK);
     }
 
-    @PutMapping(path = "/update")
-    public ResponseEntity<HttpStatus> updateTime(@RequestHeader("token") String token, @RequestBody License license) {
+    @PutMapping(path = UPDATE_ACTIVE)
+    public ResponseEntity<License> updateActive(@RequestHeader("token") String token, @RequestBody License license) {
         tokenService.verifyToken(token, TokenType.DEFAULT);
 
-        licenseService.updateActive(license);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(licenseService.updateActive(license), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/isValid/{key}")
+    @GetMapping(path = IS_VALID)
     public ResponseEntity<HttpStatus> isValid(@RequestHeader("token") String token, @PathVariable String key) {
         tokenService.verifyToken(token, TokenType.DEFAULT);
 
@@ -46,7 +44,7 @@ public class LicenseController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping(path = "/delete/{id}")
+    @DeleteMapping(path = DELETE_BY_ID)
     public ResponseEntity<HttpStatus> deleteTicket(@RequestHeader("token") String token, @PathVariable Long id) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
@@ -56,12 +54,19 @@ public class LicenseController {
     }
 
     @JsonView(License.Get.class)
-    @GetMapping(path = "/get/all")
+    @GetMapping(path = GET_ALL)
     public ResponseEntity<List<License>> getAllLicenses(@RequestHeader("token") String token) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
-        List<License> all = licenseService.findAll();
+        return new ResponseEntity<>(licenseService.findAll(), HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(all, HttpStatus.OK);
+    static final class Routes {
+        static final String ROOT = "/api/v1/license";
+        static final String SAVE = "/save";
+        static final String UPDATE_ACTIVE = "/update";
+        static final String IS_VALID = "/isValid/{key}";
+        static final String DELETE_BY_ID = "/delete/{id}";
+        static final String GET_ALL = "/get/all";
     }
 }
