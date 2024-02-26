@@ -21,14 +21,14 @@ class CmdBuilder {
     addOption(name, description, required, type) {
         if(type === 1) return this;
 
-        const size = this.subcommands.length
+        const size = this.subcommands.length;
 
         if(size === 0){
             this.options.push({name, description, required, type});
             return this;
         }
 
-        const subCommand = this.subcommands.at(size - 1)
+        const subCommand = this.subcommands.at(size - 1);
 
         subCommand.options.push({name, description, required, type});
         return this;
