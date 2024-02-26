@@ -9,13 +9,13 @@ const config = require('../settings/config.json');
 const { token, status } = config;
 
 if(!token){
-    console.log('[ERROR] You must provide a token!')
-    return
+    console.log('[ERROR] You must provide a token!');
+    return;
 }
 
 client.login(token).then(() =>{
-    client.user.setStatus(Status.Ready)
-    client.user.setActivity(status)
+    client.user.setStatus(Status.Ready);
+    client.user.setActivity(status);
 
     console.log(`Logged in as ${client.user.tag}!`);
 
