@@ -3,6 +3,7 @@ package pl.norbit.backend.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.norbit.backend.exception.ExceptionMessage;
+import pl.norbit.backend.exception.model.LicenseNotFoundException;
 import pl.norbit.backend.exception.model.NotValidLicenseException;
 import pl.norbit.backend.exception.model.RequestException;
 import pl.norbit.backend.model.license.License;
@@ -38,21 +39,21 @@ public class LicenseService {
         return licenseRepository.save(license);
     }
 
-    public void updateActive(License license){
+    public License updateActive(License license){
         String licenseKey = license.getLicenseKey();
-        String serverKey = license.getServerKey();
 
         if(licenseKey == null) throw new RequestException(ExceptionMessage.LICENSE_KEY_NULL);
-        if(serverKey == null) throw new RequestException(ExceptionMessage.LICENSE_SERVER_KEY_NULL);
 
         License licenseEntity = findByKey(licenseKey);
 
         if(licenseEntity == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
 
-        licenseEntity.setServerKey(serverKey);
+        String newServerKey = UUID.randomUUID().toString();
+
+        licenseEntity.setServerKey(newServerKey);
         licenseEntity.setLastActive(System.currentTimeMillis());
 
-        licenseRepository.save(licenseEntity);
+        return licenseRepository.save(licenseEntity);
     }
 
     public void isValidServerKey(String key, String serverKey){
@@ -68,19 +69,9 @@ public class LicenseService {
     public void isValid(String key){
         License license = findByKey(key);
 
-        if(license == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
+        if(license == null) throw new LicenseNotFoundException(ExceptionMessage.LICENSE_NOT_FOUND);
 
         if(isExpired(license)) throw new NotValidLicenseException(ExceptionMessage.LICENSE_IS_EXPIRED);
-
-        if(license.getLastActive() == 0) return;
-
-//        if(isLastActive(license)) throw new NotValidLicenseException("License was last active less than 2 minutes ago");
-    }
-
-    private boolean isLastActive(License license){
-        long time = 1000 * 60 * 2L;
-
-        return license.getLastActive() + time > System.currentTimeMillis();
     }
 
     private boolean isExpired(License license){
@@ -94,10 +85,10 @@ public class LicenseService {
     }
 
     public void deleteById(Long id) {
-        licenseRepository.findById(id)
+        License license = licenseRepository.findById(id)
                 .orElseThrow(() -> new RequestException(ExceptionMessage.LICENSE_NOT_FOUND));
 
-        licenseRepository.deleteById(id);
+        licenseRepository.delete(license);
     }
 
     public List<License> findAll() {
