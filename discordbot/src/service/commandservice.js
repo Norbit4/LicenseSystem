@@ -42,11 +42,16 @@ const isValid = async (key)=>{
 }
 
 const createLicense = async (owner, description, time)=>{
+
+    if (time && isNaN(time)) return { embeds: [createEmbed("Time must be number!", MessageType.WARN)] };
+
+    const daysToExpire = Number(time);
+
     const data = {
         responseType: 'json',
         owner,
         description,
-        time
+        daysToExpire
     }
 
     return POST('license/save', data).then((response) => {
@@ -55,8 +60,27 @@ const createLicense = async (owner, description, time)=>{
         const key = data.licenseKey;
         const owner = data.owner;
 
-        return success(`Owner: **${owner}** \nToken: \`\`\`${key}\`\`\``);
+        const expire = getExpireDate(data.expirationDate)
+
+        return success(`Owner: **${owner}** \nExpire: **${expire}** \n\nToken: \`\`\`${key}\`\`\``);
     }).catch(err => handleError(err));
+}
+
+const getExpireDate = (expirationDate) => {
+    let expire = 'never';
+
+    if(expirationDate > 0) {
+        let date = new Date(expirationDate);
+
+        let optionsDate = {day: '2-digit', month: '2-digit', year: 'numeric'};
+        let optionsTime = {hour: '2-digit', minute: '2-digit'};
+
+        let dateString = date.toLocaleDateString(undefined, optionsDate);
+        let timeString = date.toLocaleTimeString(undefined, optionsTime);
+
+        expire = timeString + " - " + dateString;
+    }
+    return expire;
 }
 
 const createToken = async (isAdmin)=>{
