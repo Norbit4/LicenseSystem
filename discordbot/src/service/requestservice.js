@@ -1,6 +1,6 @@
 const axios= require('axios');
 
-axios.defaults.baseURL = 'http://localhost:8080/api/v1';
+axios.defaults.baseURL = 'http://backend:8080/api/v1';
 axios.defaults.headers.common['token'] = 'admin-secret-token';
 
 const testValue = process.env.test;
