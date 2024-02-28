@@ -8,10 +8,17 @@ import pl.norbit.backend.model.license.License;
 import pl.norbit.backend.model.token.Token;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Service
 public class ExcelService {
+
+    private String convertTime(long time){
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm - dd.MM.yyyy");
+        return sdf.format(new Date(time));
+    }
 
     private CellStyle getHeatherStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
@@ -43,15 +50,22 @@ public class ExcelService {
     private void createLicenseSheet(Workbook workbook, CellStyle hStyle, CellStyle vStyle, List<License> licenses){
         Sheet sheet = workbook.createSheet("LICENSES");
 
-        createRow(sheet, 0, hStyle, "ID", "OWNER", "KEY");
+        String[] tittles = {"ID", "OWNER", "KEY", "CREATION DATE", "EXPIRATION DATE", "TYPE", "DESCRIPTION"};
+
+        createRow(sheet, 0, hStyle, tittles);
 
         for (int i = 0; i < licenses.size(); i++) {
             License license = licenses.get(i);
+            String expirationDate = license.getExpirationDate() == 0 ? "NEVER" : convertTime(license.getCreationDate());
 
             String[] data = {
                     license.getId().toString(),
                     license.getOwner(),
-                    license.getLicenseKey()
+                    license.getLicenseKey(),
+                    convertTime(license.getCreationDate()),
+                    expirationDate,
+                    license.getLicenseType().toString(),
+                    license.getDescription()
             };
             createRow(sheet, i + 1, vStyle, data);
         }
@@ -89,9 +103,6 @@ public class ExcelService {
             workbook.write(bos);
             byte[] byteArray = bos.toByteArray();
 
-//            try (bos) {
-//                workbook.write(bos);
-//            }
             bos.close();
             return byteArray;
         } catch (Exception e) {
