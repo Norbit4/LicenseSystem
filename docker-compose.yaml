@@ -23,3 +23,11 @@ services:
       - "8080:8080"  
     depends_on:
       - mariadb
+  bot:
+    build: ./discordbot
+    container_name: bot
+    restart: always
+    links:
+      - backend
+    depends_on:
+      - backend
