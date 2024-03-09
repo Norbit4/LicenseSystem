@@ -20,9 +20,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
-//    implementation 'org.apache.poi:poi:4.1.2'
-//    implementation 'org.apache.poi:poi-ooxml:4.1.2'
-
     //excel lib
     implementation 'org.apache.poi:poi:5.2.5'
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
