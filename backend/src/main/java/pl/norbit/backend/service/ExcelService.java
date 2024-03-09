@@ -8,6 +8,7 @@ import pl.norbit.backend.model.license.License;
 import pl.norbit.backend.model.token.Token;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -56,7 +57,7 @@ public class ExcelService {
 
         for (int i = 0; i < licenses.size(); i++) {
             License license = licenses.get(i);
-            String expirationDate = license.getExpirationDate() == 0 ? "NEVER" : convertTime(license.getCreationDate());
+            String expirationDate = license.getExpirationDate() == 0 ? "NEVER" : convertTime(license.getExpirationDate());
 
             String[] data = {
                     license.getId().toString(),
@@ -89,23 +90,18 @@ public class ExcelService {
     }
 
     public byte[] getExcelFile(List<License> licenses, List<Token> tokens) {
-        try {
-            var workbook = new XSSFWorkbook();
+        var workbook = new XSSFWorkbook();
 
-            CellStyle headerStyle = getHeatherStyle(workbook);
-            CellStyle valuesStyle = getValuesStyle(workbook);
+        CellStyle headerStyle = getHeatherStyle(workbook);
+        CellStyle valuesStyle = getValuesStyle(workbook);
 
-            createLicenseSheet(workbook, headerStyle, valuesStyle, licenses);
-            createTokenSheet(workbook, headerStyle, valuesStyle, tokens);
+        createLicenseSheet(workbook, headerStyle, valuesStyle, licenses);
+        createTokenSheet(workbook, headerStyle, valuesStyle, tokens);
 
-            var bos = new ByteArrayOutputStream();
-
+        try (var bos = new ByteArrayOutputStream()) {
             workbook.write(bos);
-            byte[] byteArray = bos.toByteArray();
-
-            bos.close();
-            return byteArray;
-        } catch (Exception e) {
+            return bos.toByteArray();
+        } catch (IOException e) {
             throw new ExcelDataException("Error while creating excel file");
         }
     }
