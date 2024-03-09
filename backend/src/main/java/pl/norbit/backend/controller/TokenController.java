@@ -1,12 +1,10 @@
 package pl.norbit.backend.controller;
 
-
-import com.fasterxml.jackson.annotation.JsonView;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.norbit.backend.model.token.Token;
+import pl.norbit.backend.dto.token.TokenResponseDTO;
 import pl.norbit.backend.model.token.TokenType;
 import pl.norbit.backend.service.TokenService;
 
@@ -21,16 +19,14 @@ public class TokenController {
     private final TokenService tokenService;
 
     @PostMapping(path = CREATE)
-    public ResponseEntity<Token> saveTicket(@RequestHeader("token") String token, @PathVariable String type) {
+    public ResponseEntity<TokenResponseDTO> saveToken(@RequestHeader("Authorization") String token, @PathVariable String type) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
-        Token saveToken = tokenService.create(type);
-
-        return new ResponseEntity<>(saveToken, HttpStatus.OK);
+        return new ResponseEntity<>(tokenService.create(type), HttpStatus.OK);
     }
 
     @DeleteMapping(path = DELETE_BY_ID)
-    public ResponseEntity<HttpStatus> deleteTicket(@RequestHeader("token") String token, @PathVariable Long id) {
+    public ResponseEntity<HttpStatus> deleteToken(@RequestHeader("Authorization") String token, @PathVariable Long id) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
         tokenService.deleteById(id);
@@ -39,13 +35,10 @@ public class TokenController {
     }
 
     @GetMapping(path = GET_ALL)
-    @JsonView(Token.TokenGet.class)
-    public ResponseEntity<List<Token>> getAllTokens(@RequestHeader("token") String token) {
+    public ResponseEntity<List<TokenResponseDTO>> getAllTokens(@RequestHeader("Authorization") String token) {
         tokenService.verifyToken(token, TokenType.ADMIN);
 
-        List<Token> all = tokenService.findAll();
-
-        return new ResponseEntity<>(all, HttpStatus.OK);
+        return new ResponseEntity<>(tokenService.getAll(), HttpStatus.OK);
     }
 
     static final class Routes {

@@ -2,11 +2,13 @@ package pl.norbit.backend.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.norbit.backend.dto.token.TokenResponseDTO;
 import pl.norbit.backend.exception.ExceptionMessage;
 import pl.norbit.backend.exception.model.LastTokenException;
 import pl.norbit.backend.exception.model.NotValidTokenException;
 import pl.norbit.backend.exception.model.RequestException;
 import pl.norbit.backend.exception.model.TokenNotFoundException;
+import pl.norbit.backend.mapper.TokenMapper;
 import pl.norbit.backend.model.token.Token;
 import pl.norbit.backend.model.token.TokenType;
 import pl.norbit.backend.repository.TokenRepository;
@@ -19,6 +21,7 @@ import java.util.UUID;
 public class TokenService {
 
     private final TokenRepository tokenRepository;
+    private final TokenMapper tokenMapper;
 
     public List<Token> findByTokenType(TokenType tokenType) {
         return tokenRepository.findTokensByTokenType(tokenType);
@@ -26,7 +29,7 @@ public class TokenService {
 
     public void verifyToken(String token, TokenType expectedTokenType) {
         Token tokenEntity = tokenRepository.findTokenByAccessToken(token)
-                .orElseThrow(() -> new TokenNotFoundException(ExceptionMessage.TOKEN_NOT_FOUND));
+                .orElseThrow(() -> new TokenNotFoundException(ExceptionMessage.TOKEN_NOT_VALID));
 
         TokenType tokenType = tokenEntity.getTokenType();
 
@@ -36,7 +39,7 @@ public class TokenService {
             throw new NotValidTokenException(ExceptionMessage.TOKEN_TYPE_NOT_VALID);
         }
     }
-    public Token create(String type) {
+    public TokenResponseDTO create(String type) {
         Token token = new Token();
 
         TokenType tokenType;
@@ -51,9 +54,7 @@ public class TokenService {
         token.setAccessToken(UUID.randomUUID().toString());
         token.setTokenType(tokenType);
 
-        tokenRepository.save(token);
-
-        return token;
+        return tokenMapper.entityToDto(tokenRepository.save(token));
     }
 
     public void deleteById(Long id) {
@@ -67,6 +68,13 @@ public class TokenService {
         }
 
         tokenRepository.deleteById(id);
+    }
+
+    public List<TokenResponseDTO> getAll() {
+        return tokenRepository.findAll()
+                .stream()
+                .map(tokenMapper::entityToDto)
+                .toList();
     }
 
     public List<Token> findAll() {

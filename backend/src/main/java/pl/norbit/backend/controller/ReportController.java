@@ -22,7 +22,7 @@ public class ReportController {
     private final ReportService reportService;
 
     @GetMapping(path = GENERATE)
-    public ResponseEntity<byte[]> generate(@RequestHeader("token") String token){
+    public ResponseEntity<byte[]> generate(@RequestHeader("Authorization") String token){
         tokenService.verifyToken(token, TokenType.ADMIN);
 
         return ResponseEntity.ok()

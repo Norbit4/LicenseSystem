@@ -2,10 +2,14 @@ package pl.norbit.backend.service;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.norbit.backend.dto.license.CreatedLicenseDTO;
+import pl.norbit.backend.dto.license.LicenseResponseDTO;
+import pl.norbit.backend.dto.license.LicenseServerKeyDTO;
 import pl.norbit.backend.exception.ExceptionMessage;
 import pl.norbit.backend.exception.model.LicenseNotFoundException;
 import pl.norbit.backend.exception.model.NotValidLicenseException;
 import pl.norbit.backend.exception.model.RequestException;
+import pl.norbit.backend.mapper.LicenseMapper;
 import pl.norbit.backend.model.license.License;
 import pl.norbit.backend.model.license.LicenseType;
 import pl.norbit.backend.repository.LicenseRepository;
@@ -18,13 +22,18 @@ import java.util.UUID;
 public class LicenseService {
 
     private final LicenseRepository licenseRepository;
+    private final LicenseMapper licenseMapper;
 
-    public License save(License license) {
+    public LicenseResponseDTO save(CreatedLicenseDTO licenseDTO) {
+        if(licenseDTO.owner() == null) throw new RequestException(ExceptionMessage.LICENSE_OWNER_NULL);
+
+        License license = new License();
+
+        license.setOwner(licenseDTO.owner());
+        license.setDescription(licenseDTO.description());
+
+        int daysToExpire = licenseDTO.expireDays();
         long now = System.currentTimeMillis();
-
-        if(license.getOwner() == null) throw new RequestException(ExceptionMessage.LICENSE_OWNER_NULL);
-
-        int daysToExpire = license.getDaysToExpire();
 
         if(daysToExpire != 0){
             license.setExpirationDate(now + 1000L * 60 * 60 * 24 * daysToExpire);
@@ -36,28 +45,30 @@ public class LicenseService {
         license.setCreationDate(now);
         license.setLicenseKey(UUID.randomUUID().toString());
 
-        return licenseRepository.save(license);
+        return licenseMapper.entityToDto(licenseRepository.save(license));
     }
 
-    public License updateActive(License license){
-        String licenseKey = license.getLicenseKey();
-
-        if(licenseKey == null) throw new RequestException(ExceptionMessage.LICENSE_KEY_NULL);
-
-        License licenseEntity = findByKey(licenseKey);
+    public LicenseServerKeyDTO generateServerKey(String key){
+        License licenseEntity = findByKey(key);
 
         if(licenseEntity == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
 
         String newServerKey = UUID.randomUUID().toString();
 
-        licenseEntity.setServerKey(newServerKey);
         licenseEntity.setLastActive(System.currentTimeMillis());
+        licenseEntity.setServerKey(newServerKey);
 
-        return licenseRepository.save(licenseEntity);
+        return licenseMapper.entityToServerKeyDto(licenseRepository.save(licenseEntity));
     }
 
-    public void isValidServerKey(String key, String serverKey){
-        License licenseEntity = findByKey(key);
+    public void isValidServerKey(LicenseServerKeyDTO licenseDTO){
+        String serverKey = licenseDTO.serverKey();
+        String licenseKey = licenseDTO.licenseKey();
+
+        if(serverKey == null) throw new RequestException(ExceptionMessage.LICENSE_SERVER_KEY_NULL);
+        if(licenseKey == null) throw new RequestException(ExceptionMessage.LICENSE_KEY_NULL);
+
+        License licenseEntity = findByKey(licenseKey);
 
         if(licenseEntity == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
         String licenseEntityServerKey = licenseEntity.getServerKey();
@@ -66,7 +77,7 @@ public class LicenseService {
             throw new NotValidLicenseException((ExceptionMessage.LICENSE_WRONG_SERVER_KEY));
     }
 
-    public void isValid(String key){
+    public void isValidKey(String key){
         License license = findByKey(key);
 
         if(license == null) throw new LicenseNotFoundException(ExceptionMessage.LICENSE_NOT_FOUND);
@@ -91,6 +102,12 @@ public class LicenseService {
         licenseRepository.delete(license);
     }
 
+    public List<LicenseResponseDTO> getAll() {
+        return licenseRepository.findAll()
+                .stream()
+                .map(licenseMapper::entityToDto)
+                .toList();
+    }
     public List<License> findAll() {
         return licenseRepository.findAll();
     }
