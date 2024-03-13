@@ -1,0 +1,4 @@
+name: ExamplePlugin
+version: '${version}'
+main: pl.norbit.exampleplugin.ExamplePlugin
+api-version: '1.20'
