@@ -13,13 +13,13 @@ const handleError = (error) => {
         messageType = MessageType.WARN;
     }
 
-    return { content: '', embeds: [createEmbed(message, messageType)] };
+    return { content: '', ephemeral: true, embeds: [createEmbed(message, messageType)] };
 };
 
 const success = (message, file) => {
-    if(file) return {content: '', embeds: [createEmbed(message, MessageType.SUCCESS)], files: [file]};
+    if(file) return {content: '',ephemeral: true, embeds: [createEmbed(message, MessageType.SUCCESS)], files: [file]};
 
-    return {content: '', embeds: [createEmbed(message, MessageType.SUCCESS)]};
+    return {content: '', ephemeral: true, embeds: [createEmbed(message, MessageType.SUCCESS)]};
 };
 
 const getReport = async ()=>{
@@ -45,13 +45,13 @@ const createLicense = async (owner, description, time)=>{
 
     if (time && isNaN(time)) return { embeds: [createEmbed("Time must be number!", MessageType.WARN)] };
 
-    const daysToExpire = Number(time);
+    const expireDays = Number(time);
 
     const data = {
         responseType: 'json',
         owner,
         description,
-        daysToExpire
+        expireDays
     }
 
     return POST('license/save', data).then((response) => {
@@ -72,10 +72,16 @@ const getExpireDate = (expirationDate) => {
     if(expirationDate > 0) {
         let date = new Date(expirationDate);
 
-        let optionsDate = {day: '2-digit', month: '2-digit', year: 'numeric'};
+        // let optionsDate = {day: '2-digit', month: '2-digit', year: 'numeric'};
         let optionsTime = {hour: '2-digit', minute: '2-digit'};
 
-        let dateString = date.toLocaleDateString(undefined, optionsDate);
+        let day = date.getDate().toString().padStart(2, '0');
+        let month = (date.getMonth() + 1).toString().padStart(2, '0');
+        let year = date.getFullYear();
+
+        let dateString = `${day}/${month}/${year}`;
+
+        // let dateString = date.toLocaleDateString(undefined, optionsDate);
         let timeString = date.toLocaleTimeString(undefined, optionsTime);
 
         expire = timeString + " - " + dateString;
