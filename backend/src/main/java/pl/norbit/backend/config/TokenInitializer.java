@@ -1,4 +1,4 @@
-package pl.norbit.backend.service;
+package pl.norbit.backend.config;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
