@@ -1,3 +1,4 @@
 .idea
 settings/config.json
 node_modules
+.vscode
