@@ -21,15 +21,6 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiException, status);
     }
 
-    @ExceptionHandler(value = TokenNotFoundException.class)
-    public ResponseEntity<ApiException> handleTokenNotFoundException(TokenNotFoundException e){
-        HttpStatus status = HttpStatus.NOT_FOUND;
-
-        ApiException apiException = new ApiException(e.getMessage(),status, ZonedDateTime.now(ZoneId.systemDefault()));
-
-        return new ResponseEntity<>(apiException, status);
-    }
-
     @ExceptionHandler(value = ExcelDataException.class)
     public ResponseEntity<ApiException> handleExcelDataException(ExcelDataException e){
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -50,15 +41,6 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(value = NotValidLicenseException.class)
     public ResponseEntity<ApiException> handleNotValidTokenException(NotValidLicenseException e){
-        HttpStatus status = HttpStatus.UNAUTHORIZED;
-
-        ApiException apiException = new ApiException(e.getMessage(),status, ZonedDateTime.now(ZoneId.systemDefault()));
-
-        return new ResponseEntity<>(apiException, status );
-    }
-
-    @ExceptionHandler(value = NotValidTokenException.class)
-    public ResponseEntity<ApiException> handleNotValidTokenException(NotValidTokenException e){
         HttpStatus status = HttpStatus.UNAUTHORIZED;
 
         ApiException apiException = new ApiException(e.getMessage(),status, ZonedDateTime.now(ZoneId.systemDefault()));

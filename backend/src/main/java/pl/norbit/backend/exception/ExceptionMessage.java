@@ -15,7 +15,6 @@ public enum ExceptionMessage {
     LICENSE_OWNER_NULL("Owner cannot be null"),
     LICENSE_WRONG_SERVER_KEY ("Server key is not valid"),
     TOKEN_NOT_FOUND("Token not found"),
-    TOKEN_NOT_VALID("Token is not valid"),
     TOKEN_TYPE_NOT_VALID("Token type is not valid"),
     TOKEN_ADMIN_LAST("You cannot delete the last ADMIN token!");
 
