@@ -1,5 +1,6 @@
 package pl.norbit.backend.controller;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,12 @@ import static pl.norbit.backend.controller.ReportController.Routes.ROOT;
 @RestController
 @RequestMapping(path = ROOT)
 @AllArgsConstructor
+@Tag(name = "Report", description = "Endpoints related to report.")
 public class ReportController {
-    private final TokenService tokenService;
     private final ReportService reportService;
 
     @GetMapping(path = GENERATE)
-    public ResponseEntity<byte[]> generate(@RequestHeader("Authorization") String token){
-        tokenService.verifyToken(token, TokenType.ADMIN);
-
+    public ResponseEntity<byte[]> generate(){
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"report.xlsx\"")
                 .body(reportService.getReportFile());

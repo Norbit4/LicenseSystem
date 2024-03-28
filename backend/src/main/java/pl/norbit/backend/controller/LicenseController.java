@@ -1,5 +1,8 @@
 package pl.norbit.backend.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,61 +21,43 @@ import static pl.norbit.backend.controller.LicenseController.Routes.*;
 @RestController
 @RequestMapping(path = ROOT)
 @AllArgsConstructor
+@Tag(name = "License", description = "Endpoints related to licenses.")
 public class LicenseController {
     private final LicenseService licenseService;
-    private final TokenService tokenService;
 
     @PostMapping(path = SAVE)
-    public ResponseEntity<LicenseResponseDTO> saveTicket(@RequestHeader("Authorization") String token,
-                                                         @RequestBody CreatedLicenseDTO license) {
-        tokenService.verifyToken(token, TokenType.ADMIN);
-
+    public ResponseEntity<LicenseResponseDTO> saveTicket(@RequestBody CreatedLicenseDTO license) {
         return new ResponseEntity<>(licenseService.save(license), HttpStatus.OK);
     }
 
     @GetMapping(path = GENERATE_SERVER_KEY)
-    public ResponseEntity<LicenseServerKeyDTO> generateServerKey(@RequestHeader("Authorization") String token,
-                                                                 @PathVariable String licenseKey){
-        tokenService.verifyToken(token, TokenType.DEFAULT);
-
+    public ResponseEntity<LicenseServerKeyDTO> generateServerKey(@PathVariable String licenseKey){
         return new ResponseEntity<>(licenseService.generateServerKey(licenseKey), HttpStatus.OK);
     }
 
     @GetMapping(path = IS_VALID)
-    public ResponseEntity<HttpStatus> isValidLicense(@RequestHeader("Authorization") String token,
-                                                     @PathVariable String licenseKey) {
-        tokenService.verifyToken(token, TokenType.DEFAULT);
-
+    public ResponseEntity<HttpStatus> isValidLicense(@PathVariable String licenseKey) {
         licenseService.isValidKey(licenseKey);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping(path = IS_VALID_SERVER_KEY)
-    public ResponseEntity<HttpStatus> isValidServerKey(@RequestHeader("Authorization") String token,
-                                                       @RequestBody LicenseServerKeyDTO license) {
-
-        tokenService.verifyToken(token, TokenType.DEFAULT);
-
+    public ResponseEntity<HttpStatus> isValidServerKey(@RequestBody LicenseServerKeyDTO license) {
         licenseService.isValidServerKey(license);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping(path = DELETE_BY_ID)
-    public ResponseEntity<HttpStatus> deleteTicket(@RequestHeader("Authorization") String token,
-                                                   @PathVariable Long id) {
-        tokenService.verifyToken(token, TokenType.ADMIN);
-
+    public ResponseEntity<HttpStatus> deleteTicket(@PathVariable Long id) {
         licenseService.deleteById(id);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(path = GET_ALL)
-    public ResponseEntity<List<LicenseResponseDTO>> getAllLicenses(@RequestHeader("Authorization") String token) {
-        tokenService.verifyToken(token, TokenType.ADMIN);
-
+    public ResponseEntity<List<LicenseResponseDTO>> getAllLicenses() {
         return new ResponseEntity<>(licenseService.getAll(), HttpStatus.OK);
     }
 
