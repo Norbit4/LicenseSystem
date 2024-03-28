@@ -5,15 +5,14 @@ import org.springframework.stereotype.Service;
 import pl.norbit.backend.dto.token.TokenResponseDTO;
 import pl.norbit.backend.exception.ExceptionMessage;
 import pl.norbit.backend.exception.model.LastTokenException;
-import pl.norbit.backend.exception.model.NotValidTokenException;
 import pl.norbit.backend.exception.model.RequestException;
-import pl.norbit.backend.exception.model.TokenNotFoundException;
 import pl.norbit.backend.mapper.TokenMapper;
 import pl.norbit.backend.model.token.Token;
 import pl.norbit.backend.model.token.TokenType;
 import pl.norbit.backend.repository.TokenRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,18 +26,11 @@ public class TokenService {
         return tokenRepository.findTokensByTokenType(tokenType);
     }
 
-    public void verifyToken(String token, TokenType expectedTokenType) {
-        Token tokenEntity = tokenRepository.findTokenByAccessToken(token)
-                .orElseThrow(() -> new TokenNotFoundException(ExceptionMessage.TOKEN_NOT_VALID));
-
-        TokenType tokenType = tokenEntity.getTokenType();
-
-        if(tokenType == TokenType.ADMIN) return;
-
-        if (tokenType != expectedTokenType) {
-            throw new NotValidTokenException(ExceptionMessage.TOKEN_TYPE_NOT_VALID);
-        }
+    public Optional<TokenResponseDTO> findByToken(String token) {
+        return tokenRepository.findTokenByAccessToken(token)
+                .map(tokenMapper::entityToDto);
     }
+
     public TokenResponseDTO create(String type) {
         Token token = new Token();
 

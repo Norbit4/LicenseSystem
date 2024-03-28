@@ -5,7 +5,6 @@ import lombok.Builder;
 @Builder
 public record CreatedLicenseDTO(String owner,
                                 String description,
-                                int expireDays,
-                                String licenseType){
+                                int expireDays){
 }
 

@@ -49,9 +49,8 @@ public class LicenseService {
     }
 
     public LicenseServerKeyDTO generateServerKey(String key){
-        License licenseEntity = findByKey(key);
-
-        if(licenseEntity == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
+        License licenseEntity = licenseRepository.findByLicenseKey(key)
+                .orElseThrow(() -> new LicenseNotFoundException(ExceptionMessage.LICENSE_NOT_FOUND));
 
         String newServerKey = UUID.randomUUID().toString();
 
@@ -68,7 +67,8 @@ public class LicenseService {
         if(serverKey == null) throw new RequestException(ExceptionMessage.LICENSE_SERVER_KEY_NULL);
         if(licenseKey == null) throw new RequestException(ExceptionMessage.LICENSE_KEY_NULL);
 
-        License licenseEntity = findByKey(licenseKey);
+        License licenseEntity =  licenseRepository.findByLicenseKey(licenseKey)
+                .orElseThrow(() -> new LicenseNotFoundException(ExceptionMessage.LICENSE_NOT_FOUND));
 
         if(licenseEntity == null) throw new NotValidLicenseException(ExceptionMessage.LICENSE_NOT_FOUND);
         String licenseEntityServerKey = licenseEntity.getServerKey();
@@ -78,9 +78,8 @@ public class LicenseService {
     }
 
     public void isValidKey(String key){
-        License license = findByKey(key);
-
-        if(license == null) throw new LicenseNotFoundException(ExceptionMessage.LICENSE_NOT_FOUND);
+        License license = licenseRepository.findByLicenseKey(key)
+                .orElseThrow(() -> new LicenseNotFoundException(ExceptionMessage.LICENSE_NOT_FOUND));
 
         if(isExpired(license)) throw new NotValidLicenseException(ExceptionMessage.LICENSE_IS_EXPIRED);
     }
@@ -89,10 +88,6 @@ public class LicenseService {
         if(license.getLicenseType() == LicenseType.LIFETIME) return false;
 
         return license.getExpirationDate() < System.currentTimeMillis();
-    }
-
-    public License findByKey(String key) {
-        return licenseRepository.findByLicenseKey(key).orElse(null);
     }
 
     public void deleteById(Long id) {
