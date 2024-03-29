@@ -26,7 +26,7 @@ public class TokenService {
         return tokenRepository.findTokensByTokenType(tokenType);
     }
 
-    public Optional<TokenResponseDTO> findByToken(String token) {
+    public Optional<TokenResponseDTO> findByAccessToken(String token) {
         return tokenRepository.findTokenByAccessToken(token)
                 .map(tokenMapper::entityToDto);
     }
@@ -67,9 +67,5 @@ public class TokenService {
                 .stream()
                 .map(tokenMapper::entityToDto)
                 .toList();
-    }
-
-    public List<Token> findAll() {
-        return tokenRepository.findAll();
     }
 }

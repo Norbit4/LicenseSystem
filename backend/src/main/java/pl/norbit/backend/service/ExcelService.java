@@ -3,6 +3,8 @@ package pl.norbit.backend.service;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import pl.norbit.backend.dto.license.LicenseResponseDTO;
+import pl.norbit.backend.dto.token.TokenResponseDTO;
 import pl.norbit.backend.exception.model.ExcelDataException;
 import pl.norbit.backend.model.license.License;
 import pl.norbit.backend.model.token.Token;
@@ -48,7 +50,7 @@ public class ExcelService {
         }
     }
 
-    private void createLicenseSheet(Workbook workbook, CellStyle hStyle, CellStyle vStyle, List<License> licenses){
+    private void createLicenseSheet(Workbook workbook, CellStyle hStyle, CellStyle vStyle, List<LicenseResponseDTO> licenses){
         Sheet sheet = workbook.createSheet("LICENSES");
 
         String[] tittles = {"ID", "OWNER", "KEY", "CREATION DATE", "EXPIRATION DATE", "TYPE", "DESCRIPTION"};
@@ -56,40 +58,40 @@ public class ExcelService {
         createRow(sheet, 0, hStyle, tittles);
 
         for (int i = 0; i < licenses.size(); i++) {
-            License license = licenses.get(i);
-            String expirationDate = license.getExpirationDate() == 0 ? "NEVER" : convertTime(license.getExpirationDate());
+            LicenseResponseDTO license = licenses.get(i);
+            String expirationDate = license.expirationDate() == 0 ? "NEVER" : convertTime(license.expirationDate());
 
             String[] data = {
-                    license.getId().toString(),
-                    license.getOwner(),
-                    license.getLicenseKey(),
-                    convertTime(license.getCreationDate()),
+                    license.id().toString(),
+                    license.owner(),
+                    license.licenseKey(),
+                    convertTime(license.creationDate()),
                     expirationDate,
-                    license.getLicenseType().toString(),
-                    license.getDescription()
+                    license.licenseType().toString(),
+                    license.description()
             };
             createRow(sheet, i + 1, vStyle, data);
         }
     }
 
-    private void createTokenSheet(Workbook workbook, CellStyle hStyle, CellStyle vStyle, List<Token> tokens){
+    private void createTokenSheet(Workbook workbook, CellStyle hStyle, CellStyle vStyle, List<TokenResponseDTO> tokens){
         Sheet sheet = workbook.createSheet("TOKENS");
 
         createRow(sheet, 0, hStyle, "ID", "TOKEN TYPE", "TOKEN");
 
         for (int i = 0; i < tokens.size(); i++) {
-            Token license = tokens.get(i);
+            TokenResponseDTO license = tokens.get(i);
 
             String[] data = {
-                    license.getId().toString(),
-                    license.getTokenType().toString(),
-                    license.getAccessToken()
+                    license.id().toString(),
+                    license.tokenType().toString(),
+                    license.accessToken()
             };
             createRow(sheet, i + 1, vStyle, data);
         }
     }
 
-    public byte[] getExcelFile(List<License> licenses, List<Token> tokens) {
+    public byte[] getExcelFile(List<LicenseResponseDTO> licenses, List<TokenResponseDTO> tokens) {
         var workbook = new XSSFWorkbook();
 
         CellStyle headerStyle = getHeatherStyle(workbook);

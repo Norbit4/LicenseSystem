@@ -103,9 +103,6 @@ public class LicenseService {
                 .map(licenseMapper::entityToDto)
                 .toList();
     }
-    public List<License> findAll() {
-        return licenseRepository.findAll();
-    }
 
     public void deleteAll() {
         licenseRepository.deleteAll();

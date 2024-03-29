@@ -34,7 +34,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String token = request.getHeader("Authorization");
 
         if (token != null) {
-            Optional<TokenResponseDTO> tokenEntity = tokenService.findByToken(token);
+            Optional<TokenResponseDTO> tokenEntity = tokenService.findByAccessToken(token);
 
             if (tokenEntity.isEmpty()) {
                 filterChain.doFilter(request, response);
