@@ -23,6 +23,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
+      - name: Execute permission to gradlew
+        run: chmod +x backend/gradlew
+
       - name: Run tests
         run: |
           cd backend
