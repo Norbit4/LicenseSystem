@@ -3,9 +3,7 @@ package pl.norbit.backend.model.token;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Data
-@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
