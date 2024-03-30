@@ -1,5 +1,6 @@
 package pl.norbit.backend.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -26,14 +27,20 @@ class TokenInitializerTest {
     @Mock
     private TokenRepository tokenRepository;
 
+    @Mock
+    private Dotenv dotenv;
+
     @InjectMocks
     private TokenInitializer underTest;
 
     @Test
     @DisplayName("Should create admin token when token not exist")
     void should_create_admin_token_when_token_not_exist() {
+
+        String defaultAccessToken = "admin-secret-token";
         //given
         given(tokenRepository.findTokensByTokenType(TokenType.ADMIN)).willReturn(new ArrayList<>());
+        given(dotenv.get("DEFAULT_ACCESS_TOKEN")).willReturn(defaultAccessToken);
 
         //then
         underTest.run();
@@ -48,6 +55,7 @@ class TokenInitializerTest {
         assertNotNull(value);
         assertEquals(TokenType.ADMIN, value.getTokenType());
         assertNotNull(value.getAccessToken());
+        assertEquals(defaultAccessToken, value.getAccessToken());
     }
 
     @Test

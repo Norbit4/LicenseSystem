@@ -3,19 +3,20 @@ const { init } = require('./commands/commandregistry');
 
 require('dotenv').config();
 
+const botToken = process.env.BOT_TOKEN;
+const botActivity = process.env.BOT_ACTIVITY;
+
 const client = new Client({ intents: [] });
 
-const config = require('../settings/config.json');
-const { token, status } = config;
 
-if(!token){
+if(!botToken){
     console.log('[ERROR] You must provide a token!');
     return;
 }
 
-client.login(token).then(() =>{
+client.login(botToken).then(() =>{
     client.user.setStatus(Status.Ready);
-    client.user.setActivity(status);
+    if(botActivity) client.user.setActivity(botActivity);
 
     console.log(`Logged in as ${client.user.tag}!`);
 

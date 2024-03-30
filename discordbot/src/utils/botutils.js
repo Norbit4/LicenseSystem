@@ -1,4 +1,4 @@
-const { Events, ModalBuilder, TextInputBuilder, ActionRowBuilder, ButtonBuilder} = require("discord.js");
+const { Events, ModalBuilder, TextInputBuilder, ActionRowBuilder } = require("discord.js");
 
 class BotManager {
     constructor(client) {

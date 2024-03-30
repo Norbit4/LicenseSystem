@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'jacoco'
 }
 
 group = 'pl.norbit'
@@ -16,6 +17,9 @@ repositories {
 }
 
 dependencies {
+    //dotenv
+    implementation 'io.github.cdimascio:dotenv-java:2.2.0'
+
     //springdoc openapi
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
 
@@ -38,6 +42,8 @@ dependencies {
     //lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+
+    //tests database
     runtimeOnly 'com.h2database:h2'
 }
 

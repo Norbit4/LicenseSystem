@@ -1,4 +1,3 @@
-version: "1.1"
 services:
   mariadb:
     image: mariadb
@@ -17,6 +16,8 @@ services:
     build: ./backend
     container_name: backend
     restart: always
+    environment:
+        DEFAULT_ACCESS_TOKEN: admin-secret-token # <- this is the default access token, generated on first run
     links:
       - mariadb
     ports:
@@ -27,6 +28,10 @@ services:
     build: ./discordbot
     container_name: bot
     restart: always
+    environment:
+        ACCESS_TOKEN: admin-secret-token
+    #   BOT_TOKEN: DISCORD_BOT_TOKER
+    #   BOT_STATUS: DISCORD_BOT_STATUS ex. playing: <DISCORD_BOT_STATUS>
     links:
       - backend
     depends_on:

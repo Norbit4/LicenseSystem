@@ -1,5 +1,6 @@
 package pl.norbit.backend.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +18,8 @@ public class TokenInitializer implements CommandLineRunner {
 
     private final TokenRepository tokenRepository;
 
+    private Dotenv dotenv;
+
     /*  Initialize default admin token if not exist
 
         DEFAULT ADMIN TOKEN: admin-secret-token
@@ -27,12 +30,15 @@ public class TokenInitializer implements CommandLineRunner {
 
         if(!tokens.isEmpty()) return;
 
+        log.info("Default admin token not exist. Creating default admin token...");
+        String defaultAccessToken = dotenv.get("DEFAULT_ACCESS_TOKEN");
+
         Token token = new Token();
         token.setTokenType(TokenType.ADMIN);
-        token.setAccessToken("admin-secret-token");
+        token.setAccessToken(defaultAccessToken);
         token.setCreationDate(System.currentTimeMillis());
 
-        log.info("Default admin token not exist. Creating default admin token...");
         tokenRepository.save(token);
+        log.info("Created default admin token: " + defaultAccessToken);
     }
 }

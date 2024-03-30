@@ -1,9 +1,7 @@
 const axios= require('axios');
 
 axios.defaults.baseURL = 'http://backend:8080/api/v1';
-axios.defaults.headers.common['Authorization'] = 'admin-secret-token';
-
-const testValue = process.env.test;
+axios.defaults.headers.common['Authorization'] =  process.env.ACCESS_TOKEN;
 
 const GET = (endpoint, responseType) =>{
    return axios.get(endpoint, {
