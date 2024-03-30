@@ -14,6 +14,7 @@ jobs:
     steps:
       - name : Checkout
         uses: actions/checkout@v2
+        
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -30,3 +31,10 @@ jobs:
         run: |
           cd backend
           ./gradlew test
+
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v2
+        if: always()  
+        with:
+          name: TestReports
+          path: backend/build/reports
