@@ -31,7 +31,7 @@ services:
     environment:
         ACCESS_TOKEN: admin-secret-token
     #   BOT_TOKEN: DISCORD_BOT_TOKER
-    #   BOT_STATUS: DISCORD_BOT_STATUS ex. playing: <DISCORD_BOT_STATUS>
+    #   BOT_ACTIVITY: DISCORD_BOT_ACTIVITY ex. playing: <DISCORD_BOT_ACTIVITY>
     links:
       - backend
     depends_on:
