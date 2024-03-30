@@ -72,7 +72,6 @@ const getExpireDate = (expirationDate) => {
     if(expirationDate > 0) {
         let date = new Date(expirationDate);
 
-        // let optionsDate = {day: '2-digit', month: '2-digit', year: 'numeric'};
         let optionsTime = {hour: '2-digit', minute: '2-digit'};
 
         let day = date.getDate().toString().padStart(2, '0');
@@ -81,7 +80,6 @@ const getExpireDate = (expirationDate) => {
 
         let dateString = `${day}/${month}/${year}`;
 
-        // let dateString = date.toLocaleDateString(undefined, optionsDate);
         let timeString = date.toLocaleTimeString(undefined, optionsTime);
 
         expire = timeString + " - " + dateString;
@@ -110,7 +108,7 @@ const deleteToken = async (id)=>{
     return DELETE(`token/delete/${id}`,'json')
         .then((response) => {
 
-            return success(`Deleted token ${id}`);
+            return success(`Deleted token with id **${id}**`);
         }).catch(err => handleError(err));
 }
 
@@ -118,7 +116,7 @@ const deleteLicense = async (id)=>{
     return DELETE(`license/delete/${id}`,'json')
         .then((response) => {
 
-            return success(`Deleted license ${id}`);
+            return success(`Deleted license with id **${id}**`);
         }).catch(err => handleError(err));
 }
 

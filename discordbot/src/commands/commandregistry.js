@@ -31,12 +31,12 @@ const createForms = (botManager) =>{
 };
 
 const createCommands = (botManager) =>{
-    const licenseCmd = new CmdBuilder("license","create new license")
+    const licenseCmd = new CmdBuilder("license", "create new license")
         .addSubCommand('generate', 'generate new license')
             .addExecute(async (e) => {
                 e.showModal(form);
             })
-        .addSubCommand("check", "check licence")
+        .addSubCommand("check", "check license")
             .addOption('key', 'license key', true, 3)
             .addExecute(async (e) => {
                 const options = e.options;
@@ -58,7 +58,7 @@ const createCommands = (botManager) =>{
             })
         .build();
 
-    const tokenCmd = new CmdBuilder("token","create new token")
+    const tokenCmd = new CmdBuilder("token", "create new token")
         .addSubCommand("generate", "generate new token")
             .addOption("admin", "generate admin token", false, 5)
             .addExecute(async (e) => {
@@ -83,11 +83,13 @@ const createCommands = (botManager) =>{
             })
         .build();
 
-    const reportCmd = new CmdBuilder("report","get all licenses and tokens")
+    const reportCmd = new CmdBuilder("report", "get all licenses and tokens")
         .addExecute(async (e) => {
+            e.deferReply({ ephemeral: true })
+
             const message = await getReport();
 
-            e.reply(message);
+            setTimeout(() => e.editReply(message), 400);
         })
         .build();
 
