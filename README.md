@@ -14,12 +14,13 @@ API is dedicate to minecraft plugins but can by used in other products and apps.
 </p>
 
 
-<h2 align="left" id="work">Table of contents</h2>
+<h2 align="left" id="content">Table of contents</h2>
 
 - [How does it work?](#work)
 - [Documentation](#doc)
 - [Discord bot](#bot)
 - [Example implementation](#implementation)
+- [Tests](#tests)
 
 
 <h2 align="left" id="work">How does it work?</h2>
@@ -45,6 +46,8 @@ git clone https://github.com/Norbit4/LicenseSystem
 docker-compose up
 ```
 
+<div align="right"><a href="#content">Back to top</a></div>
+
 <h2 align="left" id="doc">Documentation</h2>
 
 Documentation was created using [OpenApi](https://github.com/OAI)
@@ -55,6 +58,7 @@ Documentation was created using [OpenApi](https://github.com/OAI)
  <i>preview:</i>
 ![doc_example](https://github.com/Norbit4/LicenseSystem/assets/46154743/d1097c45-80ed-4bc4-bfa0-dff6c6ae417d)
 
+<div align="right"><a href="#content">Back to top</a></div>
 
 <h2 align="left" id="bot">Discord bot</h2>
 
@@ -77,7 +81,18 @@ The discord bot allows easy management of licenses and tokens.
 
 ![token_notfoud](https://github.com/Norbit4/LicenseSystem/assets/46154743/81a1b8ca-0403-4977-a34c-0c3d75b6a724)
 
+<div align="right"><a href="#content">Back to top</a></div>
 
 <h2 align="left" id="implementation">Example implementation</h2>
 
 [Click to view](https://github.com/Norbit4/LicenseSystem/tree/master/example/exampleplugin/src/main/java/pl/norbit/exampleplugin)
+
+
+<h2 align="left" id="tests">Tests</h2>
+
+![tests](https://github.com/Norbit4/LicenseSystem/assets/46154743/bce4a16e-ebc0-4029-a552-0bf36b0977c7)
+
+<a href="https://github.com/Norbit4/LicenseSystem/assets/46154743/d5e224ef-a6f0-4bed-a011-e0a7cd39fa2c" target="_blank" rel="noreferrer"> 
+<img src="https://github.com/Norbit4/LicenseSystem/assets/46154743/d5e224ef-a6f0-4bed-a011-e0a7cd39fa2c" width=630" alt="logo"/></a>
+
+<div align="right"><a href="#content">Back to top</a></div>
