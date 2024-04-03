@@ -25,7 +25,42 @@ API is dedicate to minecraft plugins but can by used in other products and apps.
 
 <h2 align="left" id="work">How does it work?</h2>
 
-- 
+<br>
+
+![schema](https://github.com/Norbit4/LicenseSystem/assets/46154743/dcca63ec-6953-41b3-8c13-5e425c0f85f9)
+
+<br>
+
+- *On startup:*
+
+```yml
+curl -X 'GET' \
+  'http://localhost:8080/api/v1/license/generateServerKey/<licenseKey>' \
+  -H 'accept: */*' \
+  -H 'Authorization: admin-secret-token'
+```   
+
+When the application starts, it performs a reqest to the API to verify if the token key is correct and generate a new serverKey. 
+If the license key is correct it sends the new generated serverKey. 
+
+- *On running:*
+
+```yml
+curl -X 'PUT' \
+  'http://localhost:8080/api/v1/license/isValidServerKey' \
+  -H 'accept: */*' \
+  -H 'Authorization: admin-secret-token' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "licenseKey": "string",
+  "serverKey": "string"
+  }'
+```   
+
+The application every x time sends a request to the API to verify if the server key is correct.
+If it is not correct it means that another application with the same license key has been started. Then the application closes.
+
+<div align="right"><a href="#content">Back to top</a></div>
 
 <h2 align="left" id="doc">Run</h2>
 
